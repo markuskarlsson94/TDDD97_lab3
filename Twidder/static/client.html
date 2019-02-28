@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="utf-8"/>
+	<head>
+		<title>Twidder!</title>
+    <link rel="stylesheet" href="static/client.css">
+		<script type="text/javascript" src=static/client.js></script>
+		<script type="text/javascript" src=static/serverstub.js></script>
+
+		<!--WELCOME VIEW-->
+		<script id="welcomeView" type="text/view">
+			<div id="welcomeGrid" class="grid">
+				<div id="welcome" class="module">
+					<img src="static/Images/twidder2.png" alt="">
+					<p class="darkGrey">The only place you get excited when a stranger follows you</p>
+					<p id="TDDD97">TDDD97 2019 - Created by Markus Karlsson and Viktor Rotting Tjädermo</p>
+				</div>
+
+				<!--LOGIN---------------------------------------->
+				<div class="form module" id="login">
+					<form id="loginForm" action="" onSubmit="userSignIn(this); return false;">
+							<label><span class="darkGrey small bold">Email:</span><input type="email" id="loginEmail" value="" required></label>
+							<label><span class="darkGrey small bold">Password:</span><input type="password" id="loginPassword" value="" required></label>
+							<input class="submit" type="submit" value="Login">
+					</form>
+				</div>
+				<!------------------------------------------------->
+
+				<!--REGISTER--------------------------------------->
+				<div class="form module" id="register">
+					<form id="registerForm" action="" onSubmit="userTryRegister(this); return false;">
+						<label><span class="darkGrey small bold">First name:</span><input type="text" id="registerFirstName" value="" required></label>
+						<label><span class="darkGrey small bold">Last name:</span><input type="text" id="registerFamilyName" value="" required></label>
+						<label><span class="darkGrey small bold">Gender:</span>
+							<select id="registerGender" required>
+								<option value="male">Male</option>
+								<option value="female">Female</option>
+								<option value="other">Other</option>
+							</select>
+						</label>
+						<label><span class="darkGrey small bold">City:</span><input type="text" id="registerCity" value="" required></label>
+						<label><span class="darkGrey small bold">Country:</span><input type="text" id="registerCountry" value="" required></label>
+						<label><span class="darkGrey small bold">Email:</span><input type="email" id="registerEmail" value="" required></label>
+						<label><span class="darkGrey small bold">Password:</span><input type="password" id="registerPass1" value="" required></label>
+						<label><span class="darkGrey small bold">Repeat password:</span><input type="password" id="registerPass2" value="" required></label>
+						<input class="submit" type="submit" value="Register" required>
+					</form>
+				</div>
+				<!------------------------------------------------->
+			</div>
+		</script>
+
+		<!--NAVBAR VIEW, contains navbar and home, browse or account view-->
+		<script id="navbarView" type="text/view">
+			<div id="navbar" class="module">
+				<div id="navbarCenter">
+					<div class="navbarButton" onClick="loadHome();"><p id="navbarHome" class="light">Home</p></div>
+					<div class="navbarButton" onClick="loadBrowse();"><p id="navbarBrowse" class="light">Browse</p></div>
+					<div class="navbarButton" onClick="loadAccount();"><p id="navbarAccount" class="light">Account</p></div>
+				</div>
+			</div>
+
+			<!--home, browse or account view is pasted below-->
+			<div id="loggedInContent"></div>
+		</script>
+
+		<!--PROFILE VIEW-->
+		<script id="profileView" type="text/view">
+			<!--This code is used for displaying both the logged in user and a user found in the browse module-->
+
+			<div id="userInfo" class="module">
+				<img src="Images/Arnold.jpg" alt="Arnold" width=150 height=150/>
+				<p id="profileFullName" class="dark"></p>
+				<p id="profileEmail" class="darkGrey"></p>
+				<br/>
+				<p id="profileGender" class="darkGrey"></p>
+				<p id="profileCountry" class="darkGrey"></p>
+				<p id="profileCity" class="darkGrey"></p>
+			</div>
+
+			<div id="wall">
+				<div id="wallMessages"><!--Messages will be posted here--></div>
+
+				<form id="homeMessageForm" action="" onSubmit="userPostMessage(this); userLoadMessages(); return false;">
+					<textarea name="" id="homeMessageField" style="resize:vertical" required></textarea>
+					<input type="submit" value="Send"/>
+					<input type="button" value="Update wall" onClick="userLoadMessages(); return false;"/>
+				</form>
+			</div>
+		</script>
+
+		<!-- BROWSE VIEW -->
+		<script id="browseView" type="text/view">
+			<form action="" id="browseForm" onSubmit="userFind(this); return false;">
+				<input id="browseEmail" type="text" placeholder="email"/>
+				<input id="browseSubmit" type="submit" value="search"/>
+			</form>
+			<div id="browseProfileAnchor"></div>
+		</script>
+
+		<!-- ACCOUNT VIEW -->
+		<script id="accountView" type="text/view">
+			<div id="accountDiv" class="module centeredWrapper">
+				<div class="centeredWrapper">
+					<form action="" id="accountForm" onSubmit="userTryChangePassword(this); return false;">
+						<label><span class="darkGrey">Old password:</span><input type="password" name="accountOldPassword" required/></label>
+						<label><span class="darkGrey">New password:</span><input type="password" name="accountNewPassword" required/></label>
+						<label><span class="darkGrey">Retype new password:</span><input type="password" name="accountNewPassword2" required/></label>
+						<input type="submit" value="Change Password"/>
+					</form>
+
+					<input type="button" value="Log Out" onClick="userSignOut();"/>
+					<input type="button" value="Delete account" onClick="userDelete();"/>
+				</div>
+			</div>
+		</script>
+	</head>
+
+  <body>
+		<div class="wrapper">
+			<!-- Error messages will be inserted below -->
+			<div id="errorMessage" class="module"><p id="errorMessageParagraph"></p></div>
+
+			<!-- Main content will be inserted below -->
+			<div id="content"></div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,362 @@
+body {
+	background-color: #f2f2f2;
+}
+
+body > .wrapper {
+	width: 600px;
+	margin: auto;
+}
+
+input, select {
+	border: none;
+	outline: none;
+	padding: 3px;
+	margin: 3px;
+	box-shadow: 0px 2px 4px rgba(0,0,0,0.1);
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, select:hover {
+	cursor: pointer;
+	background-color: #f2f2f2;
+}
+
+input[type="submit"]:hover, input[type="button"]:hover, select:hover {
+	cursor: pointer;
+	background-color: #f2f2f2;
+}
+
+input:focus:invalid {
+	background-color: #e26969;
+}
+
+#userInfo {
+	float: left;
+	width: 170px;
+	margin-right: 20px;
+}
+
+#homeFullName {
+	margin-bottom: 10px;
+	font-weight: bold;
+	text-align: center;
+}
+
+#userInfo > img {
+	padding: 10px 10px 0px 10px;
+}
+
+#wall {
+	float: left;
+	width: 410px;
+	margin-bottom: 200px;
+}
+
+#welcomeGrid {
+	height: 400px;
+	width: 600px;
+	padding-top: 10px;
+
+	grid-template-columns: 340px 250px;
+	grid-template-rows: 0.7fr 1fr 1fr;
+	grid-template-areas: "a b"
+											 "a c"
+											 "a c";
+
+}
+
+.grid {
+	margin: auto;
+	display: grid;
+	grid-gap: 10px 10px;
+}
+
+p {
+	font-family: "Arial";
+}
+
+#TDDD97 {
+	font-size: 8px;
+	color: #9a9a9a;
+	margin-top: 170px;
+}
+
+.form {
+	padding: 5px;
+}
+
+.form label {
+	display: inline-block;
+	float: right;
+	margin-bottom: 2px;
+	font-family: "Arial";
+	font-weight: bold;
+}
+
+.form input, select {
+	display: inline-block;
+	width: 120px;
+	box-sizing: border-box;
+}
+
+.submit {
+	float: right;
+}
+
+#welcome {
+	grid-area: a;
+}
+
+#welcome img {
+	width: 80%;
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+	padding-top: 20px;
+}
+
+#welcome p {
+	text-align: center;
+	padding-left: 20px;
+	padding-right: 20px;
+	padding-top: 20px;
+}
+
+#login {
+	grid-area: b;
+}
+
+#register {
+	grid-area: c;
+}
+
+#errorMessage {
+	margin: auto;
+	margin-top: 60px;
+	height: 30px;
+	width: 600px;
+	background-color: #b25555;
+	display: table;
+	overflow: hidden;
+}
+
+#errorMessage > p {
+	display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+	font-weight: bold;
+	color: white;
+}
+
+#navbar {
+	width: 600px;
+	height: 30px;
+	background-color: #37495d;
+	border-radius: 0px;
+
+	margin: auto;
+	margin-top: 10px;
+	margin-bottom: 10px;
+
+	overflow: hidden;
+}
+
+.navbarButton {
+	width: 80px;
+	height: 30px;
+	float: left;
+	text-align: center;
+	display: table;
+}
+
+.navbarButton:hover {
+	background-color: #2d3642;
+	cursor: pointer;
+}
+
+#navbarCenter {
+	width: 240px;
+	height: 30px;
+	margin: auto;
+}
+
+.navbarButton > p {
+	display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+	font-weight: bold;
+}
+
+.centeredWrapper {
+	margin: auto;
+}
+
+#accountDiv > .centeredWrapper {
+	width: 250px;
+	--height: 200px;
+	padding-top: 25px;
+	padding-bottom: 25px;
+}
+
+#accountDiv {
+	width: 300px;
+	--height: 400px;
+}
+
+#accountDiv input {
+	width: 250px;
+
+	box-sizing: border-box;
+	margin-bottom: 10px;
+}
+
+#accountDiv form {
+	margin-bottom: 25px;
+}
+
+#accountDiv label {
+	color: white;
+	font-family: "Arial";
+	font-weight: bold;
+	font-size: 12px;
+}
+
+#browseDiv {
+	width: 600px;
+	height: 400px;
+}
+
+.module {
+	background-color: white;
+	box-shadow: 0px 2px 4px rgba(0,0,0,0.2);
+}
+
+#loggedInContent, #welcomeGrid {
+	-moz-animation: fadein 0.3s;
+	-webkit-animation: fadein 0.3s;
+}
+
+@keyframes fadein {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@-webkit-keyframes fadein {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.dark {
+	color: #2d3642;
+}
+
+.darkGrey {
+	color: #706e6e;
+}
+
+.light {
+	color: #ffffff;
+}
+
+.bold {
+	font-weight: bold;
+}
+
+.small {
+	font-size: 12px;
+}
+
+.centered {
+	text-align: center;
+}
+
+#profileFullName {
+	text-align: center;
+	color: #2d3642;
+	font-weight: bold;
+}
+
+#profileEmail {
+	text-align: center;
+	color: #2d3642;
+	font-weight: bold;
+	font-size: 12px;
+}
+
+#userInfo > p {
+	margin: 5px;
+}
+
+.wallMessageDiv {
+	width: 410px;
+	margin-bottom: 15px
+}
+
+.wallEmptyMessageDiv {
+	width: 410px;
+	height: 40px;
+	margin-bottom: 10px;
+	display: table;
+}
+
+.wallEmptyMessageDiv > p {
+	display: table-cell;
+  vertical-align: middle;
+	text-align: center;
+	color: grey;
+	font-weight: bold;
+}
+
+.wallMessageSender {
+	display: table-cell;
+	font-size: 12px;
+	padding: 5px;
+	font-weight: bold;
+}
+
+.wallMessageContent {
+	margin-top: 0px;
+	margin-left: 10px;
+	margin-bottom: 0px;
+	padding-right: 10px;
+	padding-bottom: 10px;
+}
+
+#homeMessageText {
+	width: 420px;
+	box-sizing: border-box;
+}
+
+#wallMessages > input {
+	clear: left;
+}
+
+#wall input[type="submit"], #wall input[type="button"] {
+	width: 202px;
+	margin-left: 0px;
+	margin-right: 0px;
+}
+
+#wall input[type="button"] {
+	float: right;
+}
+
+#homeMessageField {
+	width: 410px;
+	min-height: 50px;
+	height: 50px;
+	box-sizing: border-box;
+	margin-bottom: 4px;
+}
+
+#browseProfileAnchor {
+	margin-top: 10px;
+}
+
+#browseSubmit {
+	width: 100px;
+	float: right;
+}
+
+#browseEmail {
+	width: 475px;
+}
