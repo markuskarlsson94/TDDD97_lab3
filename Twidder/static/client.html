@@ -19,8 +19,8 @@
 				<!--LOGIN---------------------------------------->
 				<div class="form module" id="login">
 					<form id="loginForm" action="" onSubmit="userSignIn(this); return false;">
-							<label><span class="darkGrey small bold">Email:</span><input type="email" id="loginEmail" value="" required></label>
-							<label><span class="darkGrey small bold">Password:</span><input type="password" id="loginPassword" value="" required></label>
+							<label><span class="darkGrey small bold">Email:</span><input type="email" id="loginEmail" value="a@a.com" required></label>
+							<label><span class="darkGrey small bold">Password:</span><input type="password" id="loginPassword" value="aaaaaaaa" required></label>
 							<input class="submit" type="submit" value="Login">
 					</form>
 				</div>
@@ -29,8 +29,8 @@
 				<!--REGISTER--------------------------------------->
 				<div class="form module" id="register">
 					<form id="registerForm" action="" onSubmit="userTryRegister(this); return false;">
-						<label><span class="darkGrey small bold">First name:</span><input type="text" id="registerFirstName" value="" required></label>
-						<label><span class="darkGrey small bold">Last name:</span><input type="text" id="registerFamilyName" value="" required></label>
+						<label><span class="darkGrey small bold">First name:</span><input type="text" id="registerFirstName" value="a" required></label>
+						<label><span class="darkGrey small bold">Last name:</span><input type="text" id="registerFamilyName" value="a" required></label>
 						<label><span class="darkGrey small bold">Gender:</span>
 							<select id="registerGender" required>
 								<option value="male">Male</option>
@@ -38,11 +38,11 @@
 								<option value="other">Other</option>
 							</select>
 						</label>
-						<label><span class="darkGrey small bold">City:</span><input type="text" id="registerCity" value="" required></label>
-						<label><span class="darkGrey small bold">Country:</span><input type="text" id="registerCountry" value="" required></label>
-						<label><span class="darkGrey small bold">Email:</span><input type="email" id="registerEmail" value="" required></label>
-						<label><span class="darkGrey small bold">Password:</span><input type="password" id="registerPass1" value="" required></label>
-						<label><span class="darkGrey small bold">Repeat password:</span><input type="password" id="registerPass2" value="" required></label>
+						<label><span class="darkGrey small bold">City:</span><input type="text" id="registerCity" value="a" required></label>
+						<label><span class="darkGrey small bold">Country:</span><input type="text" id="registerCountry" value="a" required></label>
+						<label><span class="darkGrey small bold">Email:</span><input type="email" id="registerEmail" value="a@a.com" required></label>
+						<label><span class="darkGrey small bold">Password:</span><input type="password" id="registerPass1" value="aaaaaaaa" required></label>
+						<label><span class="darkGrey small bold">Repeat password:</span><input type="password" id="registerPass2" value="aaaaaaaa" required></label>
 						<input class="submit" type="submit" value="Register" required>
 					</form>
 				</div>
@@ -69,7 +69,7 @@
 			<!--This code is used for displaying both the logged in user and a user found in the browse module-->
 
 			<div id="userInfo" class="module">
-				<img src="Images/Arnold.jpg" alt="Arnold" width=150 height=150/>
+				<img src="static/Images/Arnold.jpg" alt="Arnold" width=150 height=150/>
 				<p id="profileFullName" class="dark"></p>
 				<p id="profileEmail" class="darkGrey"></p>
 				<br/>

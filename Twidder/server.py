@@ -50,6 +50,7 @@ def sign_up():
     elif (len(city) == 0):
         response = create_response(False, 'Too short city')
     elif (len(country) == 0):
+
         response = create_response(False, 'Too short country')
     else:
         #Approved data, continue registration
@@ -65,6 +66,10 @@ def sign_in():
     data = request.get_json()
     email = data['email']
     passw = data['password']
+
+    #print("-----------------------------")
+    #print(email)
+    #print(passw)
 
     #generate token
     letters = 'abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -95,7 +100,7 @@ def remove_user():
 
 @app.route('/logout', methods = ['POST'])
 def logout_user():
-    data = request.get_json()
+    #data = request.get_json()
 
     if 'Authorization' in request.headers:
         a_token = request.headers.get('Authorization')
@@ -134,7 +139,7 @@ def get_user_data_by_email():
 
 @app.route('/userdatabytoken', methods = ['POST'])
 def get_user_data_by_token():
-    data = request.get_json()
+    #data = request.get_json()
 
     if 'Authorization' in request.headers:
         a_token = request.headers.get('Authorization')
