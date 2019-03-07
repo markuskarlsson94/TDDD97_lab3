@@ -188,6 +188,8 @@ def user_get_messages_email():
     if 'Authorization' in request.headers:
         a_token = request.headers.get('Authorization')
 
+    #print("token", a_token)
+
     if (not database_helper.user_logged_in(a_token)):
         return create_response(False, 'You are not logged in')
     elif (not database_helper.user_exists(email)):

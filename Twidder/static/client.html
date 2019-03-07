@@ -5,7 +5,6 @@
 		<title>Twidder!</title>
     <link rel="stylesheet" href="static/client.css">
 		<script type="text/javascript" src=static/client.js></script>
-		<script type="text/javascript" src=static/serverstub.js></script>
 
 		<!--WELCOME VIEW-->
 		<script id="welcomeView" type="text/view">
@@ -81,7 +80,8 @@
 			<div id="wall">
 				<div id="wallMessages"><!--Messages will be posted here--></div>
 
-				<form id="homeMessageForm" action="" onSubmit="userPostMessage(this); userLoadMessages(); return false;">
+				<!--<form id="homeMessageForm" action="" onSubmit="userPostMessage(this); userLoadMessages(); return false;">-->
+				<form id="homeMessageForm" action="" onSubmit="userPostMessage(this); return false;">
 					<textarea name="" id="homeMessageField" style="resize:vertical" required></textarea>
 					<input type="submit" value="Send"/>
 					<input type="button" value="Update wall" onClick="userLoadMessages(); return false;"/>

@@ -41,9 +41,9 @@ function loadWelcome() {
   hideMessage();
 }
 
-function loadHome() {
+//function loadHome() {
   //alert("First");
-  userGetLoggedInEmail(); //This function function does not get the emial. It sets the displayedUser in localStorage
+          //userGetLoggedInEmail(); //This function function does not get the emial. It sets the displayedUser in localStorage
   //setDisplayedUser(email); //Make sure that logged in user's view is loaded
     //alert("First2");
   //insertHTML("navbarView", "content");
@@ -58,6 +58,34 @@ function loadHome() {
     //alert("First7");
   //hideMessage();
     //alert("First8");
+//}
+
+//function userGetLoggedInEmail() {
+function loadHome() {
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var resp = JSON.parse(xhr.responseText);
+
+      if (resp.status) {  //Denna check saknades så jag la till den
+        localStorage.setItem("displayedUser", resp.data.email);
+        insertHTML("navbarView", "content");
+        insertHTML("profileView", "loggedInContent");
+        markTab("home");
+        userLoadInfo(resp);
+        userLoadMessages();
+        hideMessage();
+      }
+      else {
+        console.log("fel i loadHome");
+      }
+    }
+  }
+
+  xhr.open("POST", "/userdatabytoken", true);
+  xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+  xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
+  xhr.send();
 }
 
 function loadBrowse() {
@@ -100,8 +128,6 @@ function userSignIn(form) {
   var email = form.elements["loginEmail"].value;
   var pass = form.elements["loginPassword"].value;
 
-  //var obj = serverstub.signIn(email, pass);
-
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
@@ -112,27 +138,17 @@ function userSignIn(form) {
           loadHome();
         } else {
           displayErrorMessage(resp.message);
+          console.log("fel i userSignIn");
         }
       }
     }
   xhr.open("POST", "/login", true);
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
   xhr.send(JSON.stringify({"email" : email, "password" : pass}));
-
-
-  /*if (obj.success == false) {
-    displayErrorMessage(obj.message);
-  }
-  else {
-    hideMessage();
-    localStorage.setItem("token", obj.data);
-    loadHome();
-  }*/
 }
 
 function userSignOut() {
   var token = localStorage.getItem("token");
-  //var obj = serverstub.signOut(token);
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -144,6 +160,7 @@ function userSignOut() {
           loadWelcome();
         } else {
           displayErrorMessage(resp.message);
+          console.log("fel i userSignOut");
         }
       }
     }
@@ -154,14 +171,11 @@ function userSignOut() {
   xhr.send();
 }
 
-
 function registerUser(form) {
   var user = {email: form.elements["registerEmail"].value, password: form.elements["registerPass1"].value,
               firstname: form.elements["registerFirstName"].value, familyname: form.elements["registerFamilyName"].value,
               gender: form.elements["registerGender"].value, city: form.elements["registerCity"].value,
               country: form.elements["registerCountry"].value};
-
-  //var obj = serverstub.signUp(user);
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -171,6 +185,7 @@ function registerUser(form) {
           displayMessage("Succesfully registered user " + form.elements["registerEmail"].value);
         } else {
           displayErrorMessage(resp.message);
+          console.log("fel i registerUser");
         }
       }
     }
@@ -178,38 +193,21 @@ function registerUser(form) {
   xhr.open("POST", "/register", true);
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
   xhr.send(JSON.stringify(user));
-
-  /*if (obj.success == false) {
-    displayErrorMessage(obj.message);
-
-  } else {
-    displayMessage("Succesfully registered user " + form.elements["registerEmail"].value);
-  }*/
 }
 
 function userTryRegister(form) {
   var valid = validatePassword(form);
   if (valid == true) {
     registerUser(form);
-  }          //alert("hsdas");
+  }
 }
 
-  /*if (obj.success == false) {
-    displayErrorMessage(obj.message);
-  } else {
-    localStorage.removeItem("token");
-    loadWelcome();
-  }*/
 function userTryChangePassword(form) {
   var token = localStorage.getItem("token");
 
   oldPass = form.elements["accountOldPassword"].value;
   newPass1 = form.elements["accountNewPassword"].value;
   newPass2 = form.elements["accountNewPassword2"].value;
-
-  console.log(oldPass);
-  console.log(newPass1);
-  console.log(newPass2);
 
   if (newPass1.length < PASSWORDLENGTH) {
     displayErrorMessage("New password is too short");
@@ -218,7 +216,6 @@ function userTryChangePassword(form) {
   } else if (newPass1 != newPass2) {
     displayErrorMessage("Passwords do not match");
   } else {
-    //var obj = serverstub.changePassword(token, oldPass, newPass1);
 
     var xhr = new XMLHttpRequest();
     xhr.onreadystatechange = function() {
@@ -228,6 +225,7 @@ function userTryChangePassword(form) {
             displayMessage("Password successfully changed!");
           } else {
             displayErrorMessage(resp.message);
+            console.log("fel i userTryChangePassword");
           }
         }
       }
@@ -236,12 +234,6 @@ function userTryChangePassword(form) {
     xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
     xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
     xhr.send(JSON.stringify({"old" : oldPass, "new" : newPass1}));
-
-    /*if (obj.success == false) {
-      displayErrorMessage(obj.message);
-    } else {
-      displayMessage("Password successfully changed!");
-    }*/
   }
 }
 
@@ -266,11 +258,11 @@ function hideMessage() {
     error.style.visibility = "hidden";
 }
 
-function userGetFullName(email) {
+/*function userGetFullName(email) {
   var token = localStorage.getItem("token");
   var user = serverstub.getUserDataByEmail(token, email);
   return user.data.firstname + " " + user.data.familyname;
-}
+}*/
 
 function userPostMessage(form) {
   //Post a message to the displayed user
@@ -279,16 +271,18 @@ function userPostMessage(form) {
   var message = form.elements["homeMessageField"].value;
 
   form.elements["homeMessageField"].value = "";
-  //serverstub.postMessage(token, message, email);
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var resp = JSON.parse(xhr.responseText);
         if (resp.status) {
+          console.log(resp);
+          userLoadMessages();
           //displayMessage("Succesfully registered user " + form.elements["registerEmail"].value);
         } else {
           displayErrorMessage(resp.message);
+          console.log("fel i userPostMessages");
         }
       }
     }
@@ -300,119 +294,78 @@ function userPostMessage(form) {
 }
 
 function userLoadMessages() {
+  console.log("userLoadMessages börjar:");
   //Loads the wall for the displayed user
   var token = localStorage.getItem("token");
+  console.log("token: ", token);
   var email = getDisplayedUser();
+  console.log("email: ", email);
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var resp = JSON.parse(xhr.responseText);
-        if (resp.status) {
+      console.log(resp);
 
-          var messageArray = resp.data;
-          var length = messageArray.length;
+      if (resp.status) {
 
-          var anchor = document.getElementById("wallMessages");
-          anchor.innerHTML = "";
+        var messageArray = resp.data;
+        var length = messageArray.length;
 
-          if (length > 0) {
-              for (var i=0; i<length; i++) {
-                //var sender = userGetFullName(messageArray[i].writer) + " " + "(" + messageArray[i].writer + ")";
-                var sender = messageArray[i].writer;
-                var message = messageArray[i].content;
-                console.log(message);
-                anchor.innerHTML += '<div class="wallMessageDiv module"><p class="wallMessageSender dark">' + sender + ':' + '</p>' + '<p class="wallMessageContent darkGrey">' + message + '</p>' + '</div>';
-              }
-            } else {
-                anchor.innerHTML += '<div class="wallEmptyMessageDiv"><p>No messages :(</p></div>';
+        var anchor = document.getElementById("wallMessages");
+        anchor.innerHTML = "";
+
+        if (length > 0) {
+            for (var i=0; i<length; i++) {
+              //var sender = userGetFullName(messageArray[i].writer) + " " + "(" + messageArray[i].writer + ")";
+              var sender = messageArray[i].writer;
+              var message = messageArray[i].content;
+              anchor.innerHTML += '<div class="wallMessageDiv module"><p class="wallMessageSender dark">' + sender + ':' + '</p>' + '<p class="wallMessageContent darkGrey">' + message + '</p>' + '</div>';
             }
-        } else {
-          displayErrorMessage(resp.message);
-        }
+          } else {
+              anchor.innerHTML += '<div class="wallEmptyMessageDiv"><p>No messages :(</p></div>';
+          }
+      } else {
+        displayErrorMessage(resp.message);
+        console.log("fel i userLoadMessages");
       }
     }
-
-    xhr.open("POST", "/messagesbyemail", true);
-    xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-    xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
-    xhr.send(JSON.stringify({"email" : email}));
   }
 
-function userLoadInfo() {
-  //Prints the info for the displayed user
-  var token = localStorage.getItem("token");
-  var email = getDisplayedUser();
-  //var obj = serverstub.getUserDataByEmail(token, email);
-
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      var resp = JSON.parse(xhr.responseText);
-
-        if (resp.status) {
-          var firstname = resp.data.firstname;
-          var familyname = resp.data.familyname;
-          var fullname = firstname + " " + familyname;
-
-          insertString(fullname, "profileFullName");
-
-          var email = resp.data.email;
-          insertString(email, "profileEmail");
-
-          var gender = resp.data.gender;
-          insertString('<span class="small darkGrey bold">gender: </span>' + gender,"profileGender");
-
-          var country = resp.data.country;
-          insertString('<span class="small darkGrey bold">country: </span>' + country, "profileCountry");
-
-          var city = resp.data.city;
-          insertString('<span class="small darkGrey bold">city: </span>' + city, "profileCity");
-        } else {
-          displayErrorMessage(resp.message);
-        }
-      }
-    }
-
-  xhr.open("POST", "/userdatabyemail", true);
+  xhr.open("POST", "/messagesbyemail", true);
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-  xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
+  //xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
+  xhr.setRequestHeader("Authorization", token);
   xhr.send(JSON.stringify({"email" : email}));
 
+  console.log("userLoadMessages slutar");
 }
 
-function userGetLoggedInEmail() {
-  //Gets the email of the logged in user
-  //alert("email");
-  //alert(localStorage.getItem("token"));
-  var xhr = new XMLHttpRequest();
-  xhr.onreadystatechange = function() {
-    if (this.readyState == 4 && this.status == 200) {
-      var resp = JSON.parse(xhr.responseText);
-      //console.log(resp);
-      //return resp.data.email;
-      localStorage.setItem("displayedUser", resp.data.email);
-      insertHTML("navbarView", "content");
-      insertHTML("profileView", "loggedInContent");
-      markTab("home");
-      userLoadInfo();
-      userLoadMessages();
-      hideMessage();
-      }
-    }
+function userLoadInfo(resp) {
+    //Extracts user info from resp
+    var firstname = resp.data.firstname;
+    var familyname = resp.data.familyname;
+    var fullname = firstname + " " + familyname;
 
+    insertString(fullname, "profileFullName");
 
-  xhr.open("POST", "/userdatabytoken", true);
-  xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-  xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
-  xhr.send();
+    var email = resp.data.email;
+    insertString(email, "profileEmail");
+
+    var gender = resp.data.gender;
+    insertString('<span class="small darkGrey bold">gender: </span>' + gender,"profileGender");
+
+    var country = resp.data.country;
+    insertString('<span class="small darkGrey bold">country: </span>' + country, "profileCountry");
+
+    var city = resp.data.city;
+    insertString('<span class="small darkGrey bold">city: </span>' + city, "profileCity");
 }
 
 function userFind(form) {
   //Displays a user in the browse tab if found
   var token = localStorage.getItem("token");
   var email = form.elements["browseEmail"].value;
-  //var obj = serverstub.getUserDataByEmail(token, email);
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -421,30 +374,20 @@ function userFind(form) {
       if (resp.status) {
         setDisplayedUser(email);
         insertHTML("profileView", "browseProfileAnchor");
-        userLoadInfo();
+        userLoadInfo(resp);
         userLoadMessages();
         hideMessage();
       } else{
           displayErrorMessage(resp.message);
+          console.log("fel i userFind");
       }
     }
   }
-
 
   xhr.open("POST", "/userdatabyemail", true);
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
   xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
   xhr.send(JSON.stringify({"email" : email}));
-/*
-  if (obj.success) {
-    setDisplayedUser(email);
-    insertHTML("profileView", "browseProfileAnchor");
-    userLoadInfo();
-    userLoadMessages();
-    hideMessage();
-  } else {
-    displayErrorMessage(obj.message);
-  }*/
 }
 
 function setDisplayedUser(email) {
