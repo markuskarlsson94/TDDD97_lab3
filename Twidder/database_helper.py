@@ -1,5 +1,6 @@
 import sqlite3
 from flask import g, jsonify
+import unicodedata
 
 def connect_db():
     return sqlite3.connect("database.db")
@@ -25,17 +26,17 @@ def login_user(email, password, token):
     result = result.fetchone()
 
     result2 = c.execute("select * from logged_in_users where (email) = (?)", [email])
-    result2 = result2.fetchone()
-    if (result is not None and result2 is None):
+    #result2 = result2.fetchone()
+    if (result is not None):
         c.execute("insert into logged_in_users (email, token) values (?,?)", [email,token])
         c.commit()
         return True
     else:
         return False
 
-def logout_user(token):
+def logout_user(token, email):
     c = get_db()
-    stored_token = get_token()
+    stored_token = get_token(email)
     if (token == stored_token):
         c.execute("delete from logged_in_users where (token) = (?)", [token])
         c.commit()
@@ -43,11 +44,13 @@ def logout_user(token):
     else:
         return False
 
-def get_token():
+def get_token(email):
     try:
         c = get_db()
-        result = c.execute("select token from logged_in_users")
-        result = result.fetchone()[0]
+        print("asasdsadas har??")
+        result2 = c.execute("select token from logged_in_users where (email) = (?)", [email])
+        #result = c.execute("select token from logged_in_users WHERE (token) = (?)", [token])
+        result = result2.fetchone()[0]
         c.commit()
         return result
     except:

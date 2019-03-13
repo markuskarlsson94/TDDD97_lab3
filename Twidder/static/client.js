@@ -10,6 +10,13 @@ window.onload = function() {
   hideMessage();
 }
 
+/*WebSocket WebSocket(
+    in DOMString url
+    //in optional DOMString protocols
+);*/
+
+
+
 function insertHTML(source_id, dest_id) {
   //Will paste the innerHTML of source_id into the innerHTML of dest_id
   var source = document.getElementById(source_id);
@@ -124,6 +131,29 @@ function validatePassword(form) {
   return true;
 }
 
+function viktor(email, toktok) {
+  var exampleSocket = new WebSocket("ws://localhost:5001/api");
+  //exampleSocket.send("Here's some text that the server is urgently awaiting!");
+
+  exampleSocket.onopen = function() {
+    //exampleSocket.send('Ping');
+    exampleSocket.send(localStorage.getItem("token"));
+    //exampleSocket.send(JSON.stringify({"email" : email, "token" : toktok}));
+  };
+
+  exampleSocket.onerror = function(error) {
+    console.log(error);
+  };
+  exampleSocket.onmessage = function(message) {
+    if(message.data == "logout") {
+      exampleSocket.close();
+      userSignOut();
+    }
+  };
+}
+
+
+
 function userSignIn(form) {
   var email = form.elements["loginEmail"].value;
   var pass = form.elements["loginPassword"].value;
@@ -132,7 +162,10 @@ function userSignIn(form) {
   xhr.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       var resp = JSON.parse(xhr.responseText);
+      console.log(resp);
         if (resp.status) {
+          viktor();
+
           localStorage.setItem("token", resp.data);
           hideMessage();
           loadHome();
@@ -149,6 +182,7 @@ function userSignIn(form) {
 
 function userSignOut() {
   var token = localStorage.getItem("token");
+  var email = getDisplayedUser();
 
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -168,7 +202,7 @@ function userSignOut() {
   xhr.open("POST", "/logout", true);
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
   xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
-  xhr.send();
+  xhr.send(JSON.stringify({"email" : email}));
 }
 
 function registerUser(form) {

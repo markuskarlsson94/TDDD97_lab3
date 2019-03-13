@@ -1,5 +1,6 @@
 # coding=utf-8
-
+from geventwebsocket.handler import WebSocketHandler
+from gevent.pywsgi import WSGIServer
 from flask import Flask, request, jsonify, Response, send_from_directory
 import database_helper
 from random import randint
@@ -9,6 +10,34 @@ app = Flask(__name__)
 #def hello_world():
 #    return 'Hello hjesna!'
 
+users = {}
+
+
+@app.route('/api')
+def api():
+    if request.environ.get('wsgi.websocket'):
+        ws = request.environ['wsgi.websocket']
+        while True:
+            message = ws.receive()
+            email  = database_helper.token_to_email(message)
+            print(message)
+            print(database_helper.user_logged_in(message))
+            if(email != False): #titta så rätt mail för token existerar
+                if (email in users):
+                    #users[email].close()
+                    #database_helper.logout_user(token)
+                    users[email].send("logout")
+                    print("if sats")
+                    del users[email]
+                users[email] = ws
+                #använd users för att sedan jämföra innan database.login-grejen
+            ws.send(message)
+
+            print("hfeofwjw")
+            print(users[email])
+            #else:
+            #    print("OMEGALUL")
+    return
 
 @app.teardown_request
 def after_request(exception):
@@ -64,12 +93,19 @@ def sign_up():
 @app.route('/login', methods = ['POST'])
 def sign_in():
     data = request.get_json()
-    email = data['email']
+    email = str(data['email'])
     passw = data['password']
 
-    #print("-----------------------------")
-    #print(email)
-    #print(passw)
+    print("-----------------------------")
+    print(email)
+    print(passw)
+    token = database_helper.get_token(email)
+
+    #if(email in users):
+        #users[email].send("logout")
+    #if(token is not None and email in users):
+    #    users[email].send("logout")
+        #ret = database_helper.logout_user(token, email)
 
     #generate token
     letters = 'abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -80,6 +116,7 @@ def sign_in():
         token += letters[index]
 
     #try to login user
+    print("users: ", users)
     result = database_helper.login_user(email, passw, token)
     if (result):
         return create_response(True, 'Successfully signed in', token)
@@ -100,12 +137,13 @@ def remove_user():
 
 @app.route('/logout', methods = ['POST'])
 def logout_user():
-    #data = request.get_json()
+    data = request.get_json()
+    email = data['email']
 
     if 'Authorization' in request.headers:
         a_token = request.headers.get('Authorization')
 
-    ret = database_helper.logout_user(a_token)
+    ret = database_helper.logout_user(a_token, email)
     if (ret):
         return create_response(True, "User logged out")
     return create_response(False, "Could not log out user")
@@ -242,4 +280,7 @@ def user_post_message():
     return create_response(False, "Something went wrong")
 
 if __name__ == '__main__':
-    app.run(debug = True,port = 5000)
+    #app.run(debug = True,port = 5001)
+    #app.debug = True
+    http_server = WSGIServer(('',5001), app, handler_class=WebSocketHandler)
+    http_server.serve_forever()
