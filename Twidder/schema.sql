@@ -1,6 +1,7 @@
 DROP TABLE IF EXISTS registered_users;
 DROP TABLE IF EXISTS logged_in_users;
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS pageviews;
 
 CREATE TABLE registered_users(firstname varchar(30) NOT NULL,
                               familyname varchar(30) NOT NULL,
@@ -9,6 +10,7 @@ CREATE TABLE registered_users(firstname varchar(30) NOT NULL,
                               gender varchar(30) NOT NULL,
                               city varchar(30) NOT NULL,
                               country varchar(30) NOT NULL,
+                              pageviews int NOT NULL,
                               PRIMARY KEY(email));
 
 CREATE TABLE messages(email varchar(30) NOT NULL,
@@ -20,3 +22,9 @@ CREATE TABLE messages(email varchar(30) NOT NULL,
 CREATE TABLE logged_in_users(email varchar(30) NOT NULL,
                              token varchar(36) NOT NULL,
                              PRIMARY KEY(token));
+
+--CREATE TABLE pageviews(email varchar(30) NOT NULL,
+          --             views int,
+            --           FOREIGN KEY(email) REFERENCES registered_users(email));
+
+--CREATE TRIGGER registered_users ON pageviews

@@ -1,16 +1,18 @@
 # coding=utf-8
 from geventwebsocket.handler import WebSocketHandler
 from gevent.pywsgi import WSGIServer
-from flask import Flask, request, jsonify, Response, send_from_directory
+from flask import Flask, request, jsonify, Response, send_from_directory, json
 import database_helper
 from random import randint
+import json
 
 app = Flask(__name__)
 #@app.route('/')
-#def hello_world():
+#def hello_world():https://www.bogotobogo.com/python/python-json-dumps-loads-file-read-write.php
 #    return 'Hello hjesna!'
 
 users = {}
+#pageviews = {}
 
 
 @app.route('/api')
@@ -19,19 +21,14 @@ def api():
         ws = request.environ['wsgi.websocket']
         while True:
             message = ws.receive()
-            email  = database_helper.token_to_email(message)
-            print(message)
+            loadMessage = json.loads(message)
+            email  = database_helper.token_to_email(loadMessage['token'])
+            print("status", message)
             print(database_helper.user_logged_in(message))
             if(email != False): #titta så rätt mail för token existerar
-                if (email in users):
-                    #users[email].close()
-                    #database_helper.logout_user(token)
-                    users[email].send("logout")
-                    print("if sats")
-                    del users[email]
                 users[email] = ws
                 #använd users för att sedan jämföra innan database.login-grejen
-            ws.send(message)
+
 
             print("hfeofwjw")
             print(users[email])
@@ -85,6 +82,8 @@ def sign_up():
         #Approved data, continue registration
         result = database_helper.register_user(firstname, familyname, email, passw, gender, city, country)
         if (result):
+            #pageviews[email] = 0
+            #print(pageviews)
             response = create_response(True, 'User registred')
         else:
             response = create_response(False, 'User already registred')
@@ -96,9 +95,9 @@ def sign_in():
     email = str(data['email'])
     passw = data['password']
 
-    print("-----------------------------")
-    print(email)
-    print(passw)
+    #print("-----------------------------")
+    #print(email)    print("hejsan")
+    #print(passw)
     token = database_helper.get_token(email)
 
     #if(email in users):
@@ -106,6 +105,17 @@ def sign_in():
     #if(token is not None and email in users):
     #    users[email].send("logout")
         #ret = database_helper.logout_user(token, email)
+
+    #print("users: ", users)
+    if (email in users):
+        #users[email].close()
+        #database_helper.logout_user(token)
+        database_helper.logout_user(token, email)
+        print(json.dumps({'msg' : "logout"}))
+        users[email].send(json.dumps({"msg" : "logout"}))
+        print(json.dumps({'msg' : "logout"}))
+        #users[email].send("logout")
+        del users[email]
 
     #generate token
     letters = 'abcdefghiklmnopqrstuvwwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890';
@@ -116,7 +126,7 @@ def sign_in():
         token += letters[index]
 
     #try to login user
-    print("users: ", users)
+
     result = database_helper.login_user(email, passw, token)
     if (result):
         return create_response(True, 'Successfully signed in', token)
@@ -172,7 +182,11 @@ def get_user_data_by_email():
     elif (database_helper.user_exists(email) == False):
         return create_response(False, 'No such user')
 
+    database_helper.add_view(email)
     result = database_helper.get_user_data(email)
+    #print(pageviews[email])
+    #pageviews[email] = pageviews[email] + 1
+
     return create_response(True, "User data retrieved", result)
 
 @app.route('/userdatabytoken', methods = ['POST'])
@@ -278,6 +292,38 @@ def user_post_message():
         if (result):
             return create_response(True, "Message posted")
     return create_response(False, "Something went wrong")
+
+@app.route('/chartdata', methods = ['POST'])
+def chart_data():
+    data = request.get_json()
+    email = data['email']
+
+    #if 'Authorization' in request.headers:
+    #    a_token = request.headers.get('Authorization')
+
+    #email = database_helper.token_to_email(a_token)
+    result = database_helper.get_user_data(email)
+
+    print(result)
+    if(result != {}):
+        pageviews = result["pageviews"]
+        loggedin = database_helper.number_of_logged_in()
+        messages = database_helper.number_of_messages()
+        data = json.dumps({"pageviews" : pageviews, "loggedin" : loggedin, "messages" : messages, "msg" : "updatechart"})
+        print("this is a cry for help")
+        #print(data)
+        print(users)
+        for emails in users.keys():
+
+            ws = users[emails]
+            print("users",ws)
+        #if (email in users):
+            print("i am dying")
+            ws.send(data)
+    else:
+        print("Det blev fel här")
+
+    return create_response(True, "chart data retrieved")
 
 if __name__ == '__main__':
     #app.run(debug = True,port = 5001)

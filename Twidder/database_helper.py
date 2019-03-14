@@ -14,7 +14,7 @@ def get_db():
 def register_user(firstname, familyname, email, passw, gender, city, country):
     try:
         c = get_db()
-        result = c.execute("insert into registered_users (firstname, familyname, email, password, gender, city, country) values (?,?,?,?,?,?,?)", [firstname,familyname,email,passw,gender,city,country])
+        result = c.execute("insert into registered_users (firstname, familyname, email, password, gender, city, country, pageviews) values (?,?,?,?,?,?,?,0)", [firstname,familyname,email,passw,gender,city,country])
         c.commit()
         return True
     except:
@@ -110,7 +110,7 @@ def get_user_data(email):
         result = result.fetchone()
         c.commit()
         if (result is not None):
-            result = {"firstname" : result[0], "familyname" : result[1], "email" : result[2], "gender" : result[4], "city" : result[5], "country" : result[6]}
+            result = {"firstname" : result[0], "familyname" : result[1], "email" : result[2], "gender" : result[4], "city" : result[5], "country" : result[6], "pageviews" : result[7]}
             return result
         result = {}
         return result
@@ -170,7 +170,7 @@ def alter_table(command_string, parameter_array):
 
 def post_message(email, sender, message):
     try:
-        c = get_db();
+        c = get_db()
         result = c.execute("INSERT INTO messages VALUES(?, ?, ?)", [email, sender, message])
         c.commit()
         return True
@@ -187,3 +187,30 @@ def close_db():
     db = getattr(g, 'db', None)
     if db is not None:
         get_db().close()
+
+def add_view(email):
+    try:
+        c = get_db()
+        result = c.execute("UPDATE registered_users SET pageviews = pageviews + 1 WHERE (email) = (?)", [email])
+        c.commit()
+        return True
+    except:
+        return False
+
+def number_of_logged_in():
+    try:
+        c = get_db()
+        result = c.execute("SELECT COUNT(*) FROM logged_in_users")
+        result2 = result.fetchone()
+        return result2[0]
+    except:
+        return False
+
+def number_of_messages():
+    try:
+        c = get_db()
+        result = c.execute("SELECT COUNT(*) FROM messages")
+        result2 = result.fetchone()
+        return result2[0]
+    except:
+        return False

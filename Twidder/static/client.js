@@ -3,19 +3,19 @@ var PASSWORDLENGTH = 8;
 window.onload = function() {
   if (userLoggedIn()) {
     loadHome();
+    socketCreator();
+    console.log("REEEE VERSION3");
+    getChartData();
+
+    //chart();
   } else {
     loadWelcome();
   }
+  console.log("REEEEE VERSION4");
+  getChartData();
 
   hideMessage();
 }
-
-/*WebSocket WebSocket(
-    in DOMString url
-    //in optional DOMString protocols
-);*/
-
-
 
 function insertHTML(source_id, dest_id) {
   //Will paste the innerHTML of source_id into the innerHTML of dest_id
@@ -38,8 +38,9 @@ function markTab(tab) {
     var navbarTab = document.getElementById("navbarBrowse");
   } else if (tab == "account") {
     var navbarTab = document.getElementById("navbarAccount");
+  } else if (tab == "chart") {
+    var navbarTab = document.getElementById("navbarChart");
   }
-
   navbarTab.style.backgroundColor = "#2d3642";
 }
 
@@ -48,26 +49,6 @@ function loadWelcome() {
   hideMessage();
 }
 
-//function loadHome() {
-  //alert("First");
-          //userGetLoggedInEmail(); //This function function does not get the emial. It sets the displayedUser in localStorage
-  //setDisplayedUser(email); //Make sure that logged in user's view is loaded
-    //alert("First2");
-  //insertHTML("navbarView", "content");
-    //alert("First3");
-  //insertHTML("profileView", "loggedInContent");
-    //alert("First4");
-  //markTab("home");
-    //alert("First5");
-  //userLoadInfo();
-    //alert("First6");
-  //userLoadMessages();
-    //alert("First7");
-  //hideMessage();
-    //alert("First8");
-//}
-
-//function userGetLoggedInEmail() {
 function loadHome() {
   var xhr = new XMLHttpRequest();
   xhr.onreadystatechange = function() {
@@ -109,6 +90,73 @@ function loadAccount() {
   hideMessage();
 }
 
+function loadChart() {
+  insertHTML("navbarView", "content");
+  insertHTML("chartView", "loggedInContent");
+  markTab("chart");
+  chart();
+  hideMessage();
+}
+
+function getChartData() {
+  var token = localStorage.getItem("token");
+  var email = getDisplayedUser();
+
+  var xhr = new XMLHttpRequest();
+  xhr.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var resp = JSON.parse(xhr.responseText);
+
+      if (resp.status) {
+        console.log("allt bra?");
+      }
+      else {
+        console.log("fel i getChartData");
+      }
+    }
+  }
+
+  xhr.open("POST", "/chartdata", true);
+  xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
+  xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
+  xhr.send(JSON.stringify({"email" : email}));
+}
+
+function chart(email) {
+  var ctx = document.getElementById("myChart").getContext('2d');
+  var myChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+        labels: ["Posts", "Page views", "Logged in users"],
+        datasets: [{
+            label: 'Chart',
+            data: [12, getPageViews(email), 3],
+            backgroundColor: [
+                'rgba(255, 99, 132, 0.2)',
+                'rgba(54, 162, 235, 0.2)',
+                'rgba(255, 206, 86, 0.2)'
+            ],
+            borderColor: [
+                'rgba(255,99,132,1)',
+                'rgba(54, 162, 235, 1)',
+                'rgba(255, 206, 86, 1)'
+            ],
+            borderWidth: 1
+        }]
+    },
+    options: {
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:true
+                }
+            }]
+        }
+    }
+  });
+  return myChart;
+}
+
 function userLoggedIn() {
   if (localStorage.getItem("token") === null ) {
     return false;
@@ -131,23 +179,29 @@ function validatePassword(form) {
   return true;
 }
 
-function viktor(email, toktok) {
+function socketCreator() {
   var exampleSocket = new WebSocket("ws://localhost:5001/api");
-  //exampleSocket.send("Here's some text that the server is urgently awaiting!");
 
   exampleSocket.onopen = function() {
-    //exampleSocket.send('Ping');
-    exampleSocket.send(localStorage.getItem("token"));
-    //exampleSocket.send(JSON.stringify({"email" : email, "token" : toktok}));
+    exampleSocket.send(JSON.stringify({"token" : localStorage.getItem("token")}));
   };
 
   exampleSocket.onerror = function(error) {
     console.log(error);
   };
   exampleSocket.onmessage = function(message) {
-    if(message.data == "logout") {
+    //msg1 = JSON.parse(message.data);
+    //console.log(msg1.msg);
+    mess = JSON.parse(message.data).msg;
+    console.log(mess);
+    if(mess == 'logout') {
+      localStorage.removeItem("token");
+      loadWelcome();
       exampleSocket.close();
-      userSignOut();
+    } else if(mess == 'updatechart') {
+      console.log("REEEEEEEEEEEE");
+      console.log(JSON.parse(message.data).pageviews);
+      console.log(JSON.parse(message.data).loggedin);
     }
   };
 }
@@ -164,11 +218,13 @@ function userSignIn(form) {
       var resp = JSON.parse(xhr.responseText);
       console.log(resp);
         if (resp.status) {
-          viktor();
-
           localStorage.setItem("token", resp.data);
+          socketCreator();
           hideMessage();
           loadHome();
+          console.log("REEEEEEEE VERSION5");
+          getChartData();
+
         } else {
           displayErrorMessage(resp.message);
           console.log("fel i userSignIn");
@@ -192,6 +248,9 @@ function userSignOut() {
           localStorage.removeItem("token");
           localStorage.removeItem("displayedUser");
           loadWelcome();
+          console.log("REEEE VERSION2");
+          getChartData();
+
         } else {
           displayErrorMessage(resp.message);
           console.log("fel i userSignOut");
@@ -292,12 +351,6 @@ function hideMessage() {
     error.style.visibility = "hidden";
 }
 
-/*function userGetFullName(email) {
-  var token = localStorage.getItem("token");
-  var user = serverstub.getUserDataByEmail(token, email);
-  return user.data.firstname + " " + user.data.familyname;
-}*/
-
 function userPostMessage(form) {
   //Post a message to the displayed user
   var token = localStorage.getItem("token");
@@ -313,7 +366,6 @@ function userPostMessage(form) {
         if (resp.status) {
           console.log(resp);
           userLoadMessages();
-          //displayMessage("Succesfully registered user " + form.elements["registerEmail"].value);
         } else {
           displayErrorMessage(resp.message);
           console.log("fel i userPostMessages");
@@ -368,7 +420,6 @@ function userLoadMessages() {
 
   xhr.open("POST", "/messagesbyemail", true);
   xhr.setRequestHeader("Content-Type", "application/json; charset=utf-8");
-  //xhr.setRequestHeader("Authorization", localStorage.getItem("token"));
   xhr.setRequestHeader("Authorization", token);
   xhr.send(JSON.stringify({"email" : email}));
 

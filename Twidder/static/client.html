@@ -5,6 +5,7 @@
 		<title>Twidder!</title>
     <link rel="stylesheet" href="static/client.css">
 		<script type="text/javascript" src=static/client.js></script>
+		<script type="text/javascript" src=static/Chart.min.js></script>
 
 		<!--WELCOME VIEW-->
 		<script id="welcomeView" type="text/view">
@@ -56,6 +57,7 @@
 					<div class="navbarButton" onClick="loadHome();"><p id="navbarHome" class="light">Home</p></div>
 					<div class="navbarButton" onClick="loadBrowse();"><p id="navbarBrowse" class="light">Browse</p></div>
 					<div class="navbarButton" onClick="loadAccount();"><p id="navbarAccount" class="light">Account</p></div>
+					<div class="navbarButton" onClick="loadChart();"><p id="navbarChart" class="light">Chart</p></div>
 				</div>
 			</div>
 
@@ -115,6 +117,15 @@
 			</div>
 		</script>
 	</head>
+
+	<!--CHART VIEW-->
+	<script id="chartView" type="text/view">
+		<div id="chartDiv" class="module centeredWrapper">
+		<canvas id="myChart" width="400" height="400"></canvas>
+
+
+		</div>
+	</script>
 
   <body>
 		<div class="wrapper">
